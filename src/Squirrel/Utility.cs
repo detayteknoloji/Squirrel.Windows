@@ -22,6 +22,8 @@ namespace Squirrel
 {
     static class Utility
     {
+        public static bool Is64 = Environment.Is64BitOperatingSystem();
+
         public static string RemoveByteOrderMarkerIfPresent(string content)
         {
             return string.IsNullOrEmpty(content) ? 
@@ -168,7 +170,7 @@ namespace Squirrel
         {
             var psi = new ProcessStartInfo(fileName, arguments);
             if (Environment.OSVersion.Platform != PlatformID.Win32NT && fileName.EndsWith (".exe", StringComparison.OrdinalIgnoreCase)) {
-                psi = new ProcessStartInfo("wine", fileName + " " + arguments);
+                psi = new ProcessStartInfo(Is64 ? "wine64" : "wine", fileName + " " + arguments);
             }
 
             psi.UseShellExecute = false;
@@ -376,7 +378,7 @@ namespace Squirrel
                 var cmd = sevenZip;
                 var args = String.Format("x \"{0}\" -tzip -mmt on -aoa -y -o\"{1}\" *", zipFilePath, outFolder);
                 if (Environment.OSVersion.Platform != PlatformID.Win32NT) {
-                    cmd = "wine";
+                    cmd = Is64 ? "wine64" : "wine";
                     args = sevenZip + " " + args;
                 }
 
@@ -397,7 +399,7 @@ namespace Squirrel
                 var cmd = sevenZip;
                 var args = String.Format("a \"{0}\" -tzip -aoa -y -mmt on *", zipFilePath);
                 if (Environment.OSVersion.Platform != PlatformID.Win32NT) {
-                    cmd = "wine";
+                    cmd = Is64 ? "wine64" : "wine";
                     args = sevenZip + " " + args;
                 }
 
